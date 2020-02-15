@@ -1,0 +1,40 @@
+const parseStringAsArray = require('../utils/parseStringAsArray')
+const Dev = require('../models/Dev')
+const axios = require('axios');
+
+module.exports = {
+    async index(req, res) {
+        const devs = await Dev.find()
+        return res.json(devs)
+    },
+
+    async store(req, res) {
+        const { github_username, techs, latitude, longitude } = req.body
+
+        let dev = await Dev.findOne({ github_username })
+
+        if (!dev) {
+            const response = await axios.get(`https://api.github.com/users/${github_username}`, console.log(github_username))
+
+            const { name, avatar_url, bio } = response.data;
+            const arrayTechs = parseStringAsArray(techs)
+            const location = {
+                type: 'Point',
+                coordinates: [longitude, latitude]
+            }
+
+            console.log("INICIANDO CRIAÇÃO DO DEV")
+            dev = await Dev.create({
+                github_username,
+                name,
+                avatar_url,
+                bio,
+                techs: arrayTechs,
+                location
+            }, console.log("Erro ao criar dev"))
+        }
+
+        return res.json(dev)
+    }
+
+}
