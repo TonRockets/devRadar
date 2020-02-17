@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DevItem from '../src/components/DevItem/index'
 import api from './services/api'
 import './global.css'
 import './sidebar.css'
@@ -48,7 +49,9 @@ function App() {
       latitude,
       longitude
     })
-
+    setGithub_username('')
+    setTechs('')
+    setDevs([...devs, response.data])
     console.log(response.data)
   }
 
@@ -70,12 +73,12 @@ function App() {
           <div className="input-group">
             <div className="input-block">
               <label htmlFor="latitude">Latitude</label>
-              <input type="number" name="github_ulatitudesername" id="latitude" required value={latitude} onChange={e => setLatitude(e.target.value)} />
+              <input name="github_ulatitudesername" id="latitude" required value={latitude} onChange={e => setLatitude(e.target.value)} />
             </div>
 
             <div className="input-block">
               <label htmlFor="longitude">Longitude</label>
-              <input type="number" name="longitude" id="longitude" required value={longitude} onChange={e => setLatitude(e.target.value)} />
+              <input name="longitude" id="longitude" required value={longitude} onChange={e => setLatitude(e.target.value)} />
             </div>
           </div>
 
@@ -85,17 +88,7 @@ function App() {
       <main>
         <ul>
           {devs.map(dev => (
-            <li key={dev._id} className="dev-item">
-              <header>
-                <img src={dev.avatar_url} alt={dev.name} />
-                <div className="user-info">
-                  <strong>{dev.name}</strong>
-                  <span>{dev.techs}</span>
-                </div>
-              </header>
-              <p>{dev.bio}</p>
-              <a href={`https://github.com/${github_username}`}>Acessar perfil no Github</a>
-            </li>
+            <DevItem key={dev._id} dev={dev} />
           ))}
         </ul>
       </main>

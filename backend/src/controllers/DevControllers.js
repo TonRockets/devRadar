@@ -1,4 +1,4 @@
-const parseStringAsArray = require('../utils/parseStringAsArray')
+const parseArray = require('../utils/parseStringAsArray')
 const Dev = require('../models/Dev')
 const axios = require('axios');
 
@@ -14,27 +14,54 @@ module.exports = {
         let dev = await Dev.findOne({ github_username })
 
         if (!dev) {
-            const response = await axios.get(`https://api.github.com/users/${github_username}`, console.log(github_username))
+            const response = await axios.get(`https://api.github.com/users/${github_username}`)
 
-            const { name, avatar_url, bio } = response.data;
-            const arrayTechs = parseStringAsArray(techs)
+            console.log(response.data)
+
+            const { name = login, avatar_url, bio } = response.data;
+            //const arrayTechs = parseArray(techs)
             const location = {
                 type: 'Point',
-                coordinates: [longitude, latitude]
+                coordinates: [ longitude, latitude ]
             }
 
-            console.log("INICIANDO CRIAÇÃO DO DEV")
-            dev = await Dev.create({
-                github_username,
-                name,
-                avatar_url,
-                bio,
-                techs: arrayTechs,
-                location
-            }, console.log("Erro ao criar dev"))
+            try {
+                dev = await Dev.create({
+                    github_username,
+                    name,
+                    avatar_url,
+                    bio,
+                    techs: techs,
+                    location
+                }), console.log("DEV CRIADO COM SUCESSO")
+            }catch(err){
+                console.log(err, "ERRO AO CRIAR DEV")
+            }
         }
 
         return res.json(dev)
-    }
+    }, 
 
+    async update(req, res){
+
+        const {techs, longitude, latitude, bio, avatar_url } = req.body
+
+       let dev = await Dev.updateOne({
+            techs,
+            longitude,
+            latitude,
+            bio,
+            avatar_url
+        })
+
+        return res.json(dev)
+    },
+
+    // async delete(req, res){
+
+    //     let dev = await Dev.deleteOne({
+
+    //     })
+    // }
+    
 }

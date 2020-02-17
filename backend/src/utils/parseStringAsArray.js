@@ -1,4 +1,4 @@
 
-module.exports = function (stringAsArray) {
-    return stringAsArray.split(',').map(tech => tech.trim())
+module.exports = (arrayAsString) => {
+    return arrayAsString.split(',').map(tech => tech.trim())
 }
